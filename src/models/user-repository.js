@@ -2,7 +2,9 @@ const { users } = require('./db');
 const md5 = require('md5');
 const uuid = require('uuid');
 const bcrypt = require('bcryptjs');
+const {response} = require("express");
 const salt = bcrypt.genSaltSync(12);
+const jwt = require('jsonwebtoken');
 
 
 
@@ -42,6 +44,15 @@ exports.deleteUser = (id) => {
     }
 
     users.splice(userIndex, 1);
+};
+
+exports.getJWT = (body) => {
+    const user = exports.getUserByFirstName(body.firstName);
+
+    if((user !== null) && (bcrypt.compareSync(body.password, user.password)))
+        return jwt.sign(user, 'privateKey');
+    else
+        return null;
 };
 
 exports.getUserByFirstName = (firstName) => {
