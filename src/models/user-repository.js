@@ -1,47 +1,47 @@
 const { users } = require('./db');
 const md5 = require('md5');
 const uuid = require('uuid');
-const bcrypt = require('./node_modules/bcryptjs');
-const salt = 12;
+const bcrypt = require('bcryptjs');
+const salt = bcrypt.genSaltSync(12);
 
 
 
 exports.createExampleUsers = () => {
-  users.push({id        : uuid.v4(),
-              firstName : "Pascal",
-              lastName  : "Roques",
-              password  : md5("1234")});
+    users.push({id        : uuid.v4(),
+                firstName : "Pascal",
+                lastName  : "Roques",
+                password  : bcrypt.hashSync("1234", salt)});
 
-  users.push({id        : uuid.v4(),
-              firstName : "Jean",
-              lastName  : "Neymar",
-              password  : md5("5678")});
+    users.push({id        : uuid.v4(),
+                firstName : "Jean",
+                lastName  : "Neymar",
+                password  : bcrypt.hashSync("5678")});
 
-  users.push({id        : uuid.v4(),
-              firstName : "Martin",
-              lastName  : "Martin",
-              password  : md5("0000")});
+    users.push({id        : uuid.v4(),
+                firstName : "Martin",
+                lastName  : "Martin",
+                password  : bcrypt.hashSync("0000")});
 };
 
 exports.createUser = (data) => {
-  const user = {
-    id: uuid.v4(),
-    firstName: data.firstName,
-    lastName: data.lastName,
-    password: md5(data.password),
-  };
+    const user = {
+        id: uuid.v4(),
+        firstName: data.firstName,
+        lastName: data.lastName,
+        password: bcrypt.hashSync(data.password),
+    };
 
-  users.push(user);
+    users.push(user);
 };
 
 exports.deleteUser = (id) => {
-  const userIndex = users.findIndex((user) => user.id == id);
+    const userIndex = users.findIndex((user) => user.id == id);
 
-  if (userIndex === -1) {
-    throw new Error('User not foud');
-  }
+    if (userIndex === -1) {
+      throw new Error('User not foud');
+    }
 
-  users.splice(userIndex, 1);
+    users.splice(userIndex, 1);
 };
 
 exports.getUserByFirstName = (firstName) => {
