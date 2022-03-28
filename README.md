@@ -29,27 +29,28 @@
 
 ### First steps
 
-> Pour vérifier le fonctionnement de vos JWT, il faudra bien entendu faire les appels de vos routes, en passant le header correspondant (que vous trouverez dans la doc de la lib ci-dessous)
+> Pour vérifier le fonctionnement de vos JWT, il faudra bien entendu faire les appels de vos routes en passant le bon header (que vous trouverez en cherchant comment fonctionne JWT)
 
-- Installer les librairies `express-jwt` et `bcryptjs`
-- Créer un middleware dédié au `jwt` comme indiqué dans la doc de la librairie
-- Modifier la route de création d'un utilisateur
-  - Au lieu d'encrypter le mot de passe en `md5`, l'encrypter en `bcrypt` avec un `salt` de 12 (cf doc de la lib)
-- Créer une route d'authentification: `/login`
+- Installez les librairies `jsonwebtoken`, `express-jwt` et `bcryptjs`
+- Modifier la route de création d'un utilisateur \/
+  - Au lieu d'encrypter le mot de passe en `md5`, l'encrypter en `bcrypt` avec un `salt` de 12 (cf. doc de la lib)
+- Créez une route d'authentification: `/login`
   - Body de la request: firstName, password
-  - Aller chercher dans les utilisateurs, celui dont le firstName correspond à celui dans le body de la request
+  - Allez chercher dans les utilisateurs, celui dont le firstName correspond à celui dans le body de la request
   - En fonction de l'utilisateur récupéré, comparé le password qu'il avait en base (encrypté) avec celui qui est dans le body de la request
   - Si les passwords ne matchent pas => Réponse 401 Unauthorized
-  - Si les password matchent, on créé et retourne un jwt
-- Enfin, rendez les routes de MODIFICATION et de SUPPRESSION d'utilisateurs accessibles UNIQUEMENT aux utilisateurs authentifiés grâce à un JWT valide
+  - Si les password matchent, on créé et retourne un jwt (grâce à la lib `jsonwebtoken`)
+- Enfin, grâce à la lib `express-jwt`, créez un middleware qui rendra les routes de MODIFICATION / SUPPRESSION d'un utilisateur accessibles seulement aux utilisateurs authentifiés grâce à un JWT valide
 
 ### Optional steps
 
 - Étant donné la requête par `firstName` de la route `/login`, faites en sorte que dans la table des utilisateurs, on ne puisse pas avoir 2 fois un utilisateur avec le même `firstName`
 - Rajoutez une information `roles` dans la table des utilisateurs, qui sera un tableau de string
 - 2 rôles existeront au sein de l'aplication: ADMIN / MEMBER
-- Pour les routes suivants, définissez les accès comme suit:
+- Pour les routes suivantes, définissez les accès comme suit:
   - `/login` => tout le monde à le droit
-  - `GET /users` & `GET /users/:id` => les utilisateurs ayant les rôles ADMIN / MEMBER ont le droit
-  - `POST /users` & `PUT /users/:id` & `DELETE /users/:id` => seulent les ADMIN ont le droit
+  - `GET /users` & `GET /users/:firstName` => les utilisateurs ayant les rôles ADMIN / MEMBER ont le droit
+  - `POST /users` & `PUT /users/:id` & `DELETE /users/:id` => seul les ADMIN ont le droit
 - Gérez en conséquence les retours d'erreurs de façon à avoir des erreurs compréhensibles pour ceux qui utiliseront les API de votre back-end
+- Pour le `secret` permettant la génération du JWT, utilisez une **variable d'environnement** dédiée à ce besoin (cherchez donc à comprendre ce que sont les "variables d'environnement" ainsi que leurs utilités)
+- Lors de la création du JWT, rajoutez lui une durée de 1h avant expiration. Cette information doit également se retrouver dans une variable d'environnement dédiée

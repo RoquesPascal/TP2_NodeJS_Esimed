@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const userRepository = require('../models/user-repository');
+const app = express()
+const port = 3000
 
 router.get('/', (req, res) => {
   res.send(userRepository.getUsers())
@@ -14,6 +16,11 @@ router.get('/:firstName', (req, res) => {
   }
 
   res.send(foundUser);
+});
+
+router.post('/create-example-users', (req, res) => {
+  userRepository.createExampleUsers();
+  res.status(201).end();
 });
 
 router.post('/', (req, res) => {
