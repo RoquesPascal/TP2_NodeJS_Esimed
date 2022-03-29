@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const userRepository = require('../models/user-repository');
-const app = express()
-const port = 3000
+const app = express();
+const port = 3000;
+const {users} = require("../models/db");
+
+
 
 router.get('/', (req, res) => {
     res.send(userRepository.getUsers())
@@ -28,19 +31,21 @@ router.post('/', (req, res) => {
     res.status(201).end();
 });
 
-router.put('/:id', (req, res) => {
+router.put('/update/:id', (req, res) => {
     userRepository.updateUser(req.params.id, req.body);
     res.status(204).end();
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/delete/:id', (req, res) => {
     userRepository.deleteUser(req.params.id);
     res.status(204).end();
 });
 
 router.post('/login', (req, res) => {
-    if(userRepository.getJWT(req.body))
+    const token = userRepository.getJWT(req.body);
+    if(token !== null)
     {
+        res.send(token)
         res.status(200).end();
     }
     else

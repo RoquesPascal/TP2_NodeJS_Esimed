@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const {response} = require("express");
 const salt = bcrypt.genSaltSync(12);
 const jwt = require('jsonwebtoken');
+const {sign} = require("jsonwebtoken");
 
 
 
@@ -50,7 +51,8 @@ exports.getJWT = (body) => {
     const user = exports.getUserByFirstName(body.firstName);
 
     if((user !== null) && (bcrypt.compareSync(body.password, user.password)))
-        return jwt.sign(user, 'privateKey');
+        //return jwt.sign(user, 'privateKey');
+        return sign(user, 'privateKey', {expiresIn : "1h"});
     else
         return null;
 };
