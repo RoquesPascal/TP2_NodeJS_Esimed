@@ -7,23 +7,29 @@ const salt = bcrypt.genSaltSync(12);
 const jwt = require('jsonwebtoken');
 const {sign} = require("jsonwebtoken");
 
+const Roles_Admin  = "ADMIN";
+const Roles_Member = "MEMBER";
+
 
 
 exports.createExampleUsers = () => {
     users.push({id        : uuid.v4(),
                 firstName : "Pascal",
                 lastName  : "Roques",
-                password  : bcrypt.hashSync("1234", salt)});
+                password  : bcrypt.hashSync("1234", salt),
+                roles     : [Roles_Admin]});
 
     users.push({id        : uuid.v4(),
                 firstName : "Jean",
                 lastName  : "Neymar",
-                password  : bcrypt.hashSync("5678")});
+                password  : bcrypt.hashSync("5678"),
+                roles     : [Roles_Member]});
 
     users.push({id        : uuid.v4(),
                 firstName : "Martin",
                 lastName  : "Martin",
-                password  : bcrypt.hashSync("0000")});
+                password  : bcrypt.hashSync("0000"),
+                roles     : [Roles_Member]});
 };
 
 exports.createUser = (data) => {
@@ -32,6 +38,7 @@ exports.createUser = (data) => {
         firstName: data.firstName,
         lastName: data.lastName,
         password: bcrypt.hashSync(data.password),
+        roles: [Roles_Member]
     };
 
     users.push(user);
@@ -51,7 +58,6 @@ exports.getJWT = (body) => {
     const user = exports.getUserByFirstName(body.firstName);
 
     if((user !== null) && (bcrypt.compareSync(body.password, user.password)))
-        //return jwt.sign(user, 'privateKey');
         return sign(user, 'privateKey', {expiresIn : "1h"});
     else
         return null;
